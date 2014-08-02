@@ -19,12 +19,12 @@ gem install serf_handler
 require 'serf_handler'
 
 class MyEventHandler < SerfHandler
-  # called by SerfHandler when member-join event occur
+  # called by SerfHandler when member-join event occurs
   def member_join
     # write your code
   end
   
-  # called by SerfHandler when your custome event occur
+  # called by SerfHandler when your custome event occurs
   def your_custome_event
     # write your code
   end
