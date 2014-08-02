@@ -2,7 +2,7 @@ serf_handler
 ============
 [![Build Status](https://travis-ci.org/konchan/serf_handler.svg?branch=master)](https://travis-ci.org/konchan/serf_handler)
 
-[Serf](http://www.serfdom.io/) is a cluster orchestration framework which developed by [HashiCorp](http://www.hashicorp.com/). Serf allows you to execute your scripts when serf event occur.
+[Serf](http://www.serfdom.io/) is a cluster orchestration framework which developed by [HashiCorp](http://www.hashicorp.com/). Serf allows you to execute your scripts when serf event occurs.
 You can simply extend SerfHandler and process serf events. Serf_handler is a very simple Ruby framework with no dependencies.
 I have a lot in reference to [this code](https://github.com/garethr/serf-master).
 
@@ -18,9 +18,14 @@ gem install serf_handler
 #!/usr/bin/env ruby
 require 'serf_handler'
 
-class MyEventHandler
+class MyEventHandler < SerfHandler
   # called by SerfHandler when member-join event occur
   def member_join
+    # write your code
+  end
+  
+  # called by SerfHandler when your custome event occur
+  def your_custome_event
     # write your code
   end
 end
@@ -33,8 +38,8 @@ end
 ```
 
 ### Contributing
-- Fork it
-- Create your feature branch (```git checkout -b my-new-feature```)
-- Commit your changes (```git commit -am 'Add some feature'```)
-- Push to the branch (```git push origin my-new-feature```)
-- Create new Pull Request
+1.Fork it
+2.Create your feature branch (```git checkout -b my-new-feature```)
+3.Commit your changes (```git commit -am 'Add some feature'```)
+4.Push to the branch (```git push origin my-new-feature```)
+5.Create new Pull Request
