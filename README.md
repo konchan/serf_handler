@@ -15,6 +15,7 @@ gem install serf_handler
 ### how to use
 
 ```sample.rb
+#!/usr/bin/env ruby
 require 'serf_handler'
 
 class MyEventHandler
