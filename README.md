@@ -14,7 +14,7 @@ gem install serf_handler
 
 ### how to use
 
-```sample.rb
+```ruby
 #!/usr/bin/env ruby
 require 'serf_handler'
 
