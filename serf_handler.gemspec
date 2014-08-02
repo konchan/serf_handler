@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
   gem.description = 'Serf event handlers for ruby'
   gem.summary     = 'Serf event handlers for ruby'
   gem.homepage    = 'http://github.com/konchan/serf_handler'
-  gem.licenses    = ['Apache 2.0']
+  gem.licenses    = ['MIT']
 
   gem.rubygems_version = '2.0.14'
   gem.files            = `git ls-files`.split($\)
