@@ -19,12 +19,17 @@ gem install serf_handler
 require 'serf_handler'
 
 class MyEventHandler < SerfHandler
-  # called by SerfHandler when member-join event occurs
+  def initialize
+    # if logfile not specified, log outputs to STDOUT.
+    super("/path/to/logfile")
+  end
+  
+  # called by SerfHandlerProxy when member-join event occurs
   def member_join
     # write your code
   end
   
-  # called by SerfHandler when your custome event occurs
+  # called by SerfHandlerProxy when your custome event occurs
   def your_custome_event
     # write your code
   end
@@ -33,6 +38,8 @@ end
 if __FILE__ == $0
   handler = SerfHandlerProxy.new
   handler.register('MyRole', MyEventHandler.new)
+  # another code
+  # handler.regiter('default', MyEventHandler.new)
   handler.run
 end
 ```
