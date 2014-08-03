@@ -6,9 +6,13 @@ require "logger"
 class SerfHandler
   attr :name, :role, :event
 
-  def initialize(logger=nil)
-    if logger
-      @logger = logger
+  def initialize(log=nil)
+    if log
+      if log.kind_of?(String)
+        @logger = Logger.new(log)
+      else
+        @logger = log
+      end
     else
       @logger = Logger.new(STDOUT)
       @logger.level = Logger::INFO
@@ -24,8 +28,8 @@ class SerfHandler
 end
 
 class SerfHandlerProxy < SerfHandler
-  def initialize(logger=nil)
-    super(logger)
+  def initialize(log_file=nil)
+    super(log_file)
     @handlers = {}
   end
 
@@ -50,7 +54,7 @@ class SerfHandlerProxy < SerfHandler
       begin
         klass.send @event
       rescue NoMethodError => e
-        log "event not implemented by class"
+        log "#{@event} event not implemented by class"
       end
     end
   end

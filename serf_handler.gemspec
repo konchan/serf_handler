@@ -5,11 +5,11 @@ require 'serf_handler'
 
 Gem::Specification.new do |gem|
   gem.name        = 'serf_handler'
-  gem.version     = '0.1'
+  gem.version     = '0.1.1'
   gem.authors     = ['KONNO Katsuyuki']
   gem.email       = 'konno.katsuyuki@nifty.com'
-  gem.description = 'Serf event handlers for ruby'
-  gem.summary     = 'Serf event handlers for ruby'
+  gem.description = 'Serf event handler for ruby'
+  gem.summary     = 'Serf event handler for ruby'
   gem.homepage    = 'http://github.com/konchan/serf_handler'
   gem.licenses    = ['MIT']
 

@@ -70,7 +70,7 @@ describe "SerfHandlerProxy" do
 
     it "has no method implemented" do
       logger = double('Logger')
-      expect(logger).to receive(:info).with("event not implemented by class").and_return(true)
+      expect(logger).to receive(:info).with("member_join event not implemented by class").and_return(true)
       handler = SerfHandlerProxy.new(logger)
       handler.register('default', SerfHandler.new)
       handler.run
