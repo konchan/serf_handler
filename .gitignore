@@ -20,4 +20,4 @@ vendor
 *~
 .gitignore~
 *.zip
-
+build/
