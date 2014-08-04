@@ -1,0 +1,31 @@
+# service, system control commands
+service:
+    start:
+        iis: "iisreset.exe /start > nul"
+        mongo: "service mongod start > /dev/null 2>&1"
+        haproxy: "service haproxy start >/dev/null 2>&1"
+    stop:
+        iis: "iisreset.exe /stop > nul"
+        mongo: "service mongod stop > /dev/null 2>&1"
+        haproxy: "service haproxy stop >/dev/null 2>&1"
+    restart:
+        iis: "iisreset.exe /restart > nul"
+        mongo: "service mongod restart > /dev/null 2>&1"
+        haproxy: "service haproxy restart >/dev/null 2>&1"
+    reload:
+        iis: "iisreset.exe /restart > nul"
+        mongo: "service mongod restart > /dev/null 2>&1"
+        haproxy: "service haproxy reload >/dev/null 2>&1"
+    status:
+        iis: "iisreset.exe /status"
+        mongo: "service mongod status > /dev/null 2>&1"
+        haproxy: "service haproxy status"
+system:
+    shutdown:
+        lb: "shutdown -h 1 >/dev/null 2>&1"
+        mongo: "shutdown -h 1 >/dev/null 2>&1"
+        web: "shutdown /s /t 60 > nul"
+    reboot:
+        lb: "shutdown -r 1 >/dev/null 2>&1"
+        mongo: "shutdown -r 1 >/dev/null 2>&1"
+        web: "shutdown /r /t 60 > nul"
