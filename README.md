@@ -35,6 +35,19 @@ class MyEventHandler < SerfHandler
     log "start processing custom event"
     # write your code
   end
+  
+  # called by SerfHandlerProxy when you issue custom query
+  # ex. serf query your_query_name "PAYLOAD"
+  def your_query_name
+    # write your code
+    
+    reponse("query reponse message you want to return")
+    # if reponse message exceeds 1024 bytes limitation,
+    # SerfHandler returns "message exceeds limit of 1024 bytes." to serf query client.
+    # if you implement the methods for queries,
+    # you have to set logfile.
+    # serf query command returns output of stdout/stderr.
+  end
 end
 
 if __FILE__ == $0
