@@ -23,24 +23,7 @@ class CustomQueryHandler < SerfHandler
     STDIN.each_line do |line|
       info[:service_ctl_word], info[:target], info[:role_node], _ = line.split(' ')
     end
-    command = @cmds["service"][info[:service_ctl_word]][info[:target]]
-    re = Regexp.compile("#{@name}|#{@role}", Regexp::IGNORECASE)
-    if re =~ info[:role_node]
-      result = `#{command}`
-      log "execute #{command} => result: #{$?}"
-      if $?.to_s.include?("exit 0")
-        if info[:service_ctl_word].downcase == "status"
-          case result.encode("UTF-8")
-          when /running/ then response("running")
-          when /stopped/   then response("stopped")
-          end
-        else
-          response("success")
-        end
-      else
-        response("fail")
-      end
-    end
+    execute_command @cmds["service"][info[:service_ctl_word]][info[:target]], info[:role_node]
   end
 
   def system_ctl
@@ -48,13 +31,23 @@ class CustomQueryHandler < SerfHandler
     STDIN.each_line do |line|
       info[:system_ctl_word], info[:role_node], _ = line.split(' ')
     end
-    command = @cmds["system"][info[:system_ctl_word]][@role]
+    execute_command @cmds["system"][info[:system_ctl_word]][@role], info[:role_node]
+  end
+
+  def execute_command(command, host)
     re = Regexp.compile("#{@name}|#{@role}", Regexp::IGNORECASE)
-    if re =~ info[:role_node]
-      system(command)
+    if re =~ host
+      result = `#{command}`
       log "execute #{command} => result: #{$?}"
       if $?.to_s.include?("exit 0")
-        response("success")
+        if command.downcase.include?("status")
+          case result.encode("UTF-8")
+          when /running/ then response("running")
+          when /stopped/   then response("stopped")
+          end
+        else
+          response("success")
+        end
       else
         response("fail")
       end
