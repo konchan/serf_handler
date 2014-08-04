@@ -19,11 +19,28 @@ class SerfHandler
     end
     @name = ENV['SERF_SELF_NAME']
     @role = ENV['SERF_TAG_ROLE'] || ENV['SERF_SELF_ROLE']
-    @event = ENV['SERF_EVENT'] == 'user'? ENV['SERF_USER_EVENT'] : ENV['SERF_EVENT'].gsub(/-/, '_')
+    @event = case ENV['SERF_EVENT']
+             when 'user'
+               ENV['SERF_USER_EVENT']
+             when 'query'
+               ENV['SERF_QUERY_NAME']
+             else
+               ENV['SERF_EVENT'].gsub(/-/, '_')
+             end
   end
 
   def log(msg)
     @logger.info(msg)
+  end
+
+  def response(msg)
+    if msg.bytesize > 1024
+      message = "message exceeds limit of 1024 bytes."
+      log message
+      puts message
+    else
+      puts msg
+    end
   end
 end
 
