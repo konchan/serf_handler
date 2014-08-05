@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-# custome_query_handler.rb
+# custome_event_handler.rb
 # 
 # for maintenance
 #  Control services
 #   serf query -tag role=web status iis
 #  Control system shutdown or reboot
-#   serf query -node your_host shutdown
+#   serf event system_ctl "shutdown lb"
 
 require 'yaml'
 require 'serf_handler'
@@ -13,7 +13,8 @@ require 'serf_handler'
 class CustomQueryHandler < SerfHandler
   CMDFILE = "/etc/serf/cmd.yml"
   LOGFILE = "/var/log/serf/query_handler.log"
-  METHOD_NAME = [ "start", "stop", "restart", "reload", "status" ]
+  SERVICE_METHOD_NAME = [ "start", "stop", "restart", "reload", "status" ]
+  SYSTEM_METHOD_NAME = [ "shutdown", "reboot" ]
 
   def initialize
     super(LOGFILE)
@@ -21,7 +22,7 @@ class CustomQueryHandler < SerfHandler
   end
 
   # generate start, stop, restart, reload, status methods.
-  METHOD_NAME.each do |m|
+  SERVICE_METHOD_NAME.each do |m|
     define_method(m) do
       info = {}
       STDIN.each_line do |line|
@@ -31,12 +32,9 @@ class CustomQueryHandler < SerfHandler
     end
   end
 
-  def shutdown
-    execute_command @cmds["system"]["shutdown"]
-  end
-
-  def reboot
-    execute_command @cmds["system"]["reboot"]
+  # generate shutdown, reboot methods.
+  SYSTEM_METHOD_NAME.each do |m|
+    define_method(m) { execute_command @cmds["system"]["#{m}"] }
   end
 
   def execute_command(command)
