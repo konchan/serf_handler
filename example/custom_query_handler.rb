@@ -34,7 +34,7 @@ class CustomQueryHandler < SerfHandler
 
   # generate shutdown, reboot methods.
   SYSTEM_METHOD_NAME.each do |m|
-    define_method(m) { execute_command @cmds["system"]["#{m}"] }
+    define_method(m) { execute_command @cmds["system"]["#{m}"][@role] }
   end
 
   def execute_command(command)
