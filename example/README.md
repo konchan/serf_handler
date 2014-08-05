@@ -4,14 +4,14 @@ You may control the service and system by using serf queries.
 For example,
 
 ```
-serf query service_ctl "start iis MYHOST"
+serf query -tag role=web start iis
 ```
 
-allows to start iis on MYHOST.
+allows to start iis on the machine which has the role of web.
 
 ```
-serf query system_ctl "reboot web"
+serf query -node your_host reboot
 ```
 
-allow to reboot the machine which has the role of web.
+allow to reboot on your_host.
 

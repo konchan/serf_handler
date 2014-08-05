@@ -1,56 +1,58 @@
 # -*- coding: utf-8 -*-
-# custome_event_handler.rb
+# custome_query_handler.rb
 # 
 # for maintenance
 #  Control services
-#   serf event service_ctl "stop solr neuron-se1v1"
+#   serf query -tag role=web status iis
 #  Control system shutdown or reboot
-#   serf event system_ctl "shutdown lb"
+#   serf query -node your_host shutdown
+
 require 'yaml'
 require 'serf_handler'
 
 class CustomQueryHandler < SerfHandler
   CMDFILE = "/etc/serf/cmd.yml"
   LOGFILE = "/var/log/serf/query_handler.log"
+  METHOD_NAME = [ "start", "stop", "restart", "reload", "status" ]
 
   def initialize
     super(LOGFILE)
     @cmds = YAML.load_file(CMDFILE)
   end
 
-  def service_ctl
-    info = {}
-    STDIN.each_line do |line|
-      info[:service_ctl_word], info[:target], info[:role_node], _ = line.split(' ')
+  # generate start, stop, restart, reload, status methods.
+  METHOD_NAME.each do |m|
+    define_method(m) do
+      info = {}
+      STDIN.each_line do |line|
+        info[:target], _ = line.split(' ')
+      end
+      execute_command @cmds["service"]["#{m}"][info[:target]]
     end
-    execute_command @cmds["service"][info[:service_ctl_word]][info[:target]], info[:role_node]
   end
 
-  def system_ctl
-    info = {}
-    STDIN.each_line do |line|
-      info[:system_ctl_word], info[:role_node], _ = line.split(' ')
-    end
-    execute_command @cmds["system"][info[:system_ctl_word]][@role], info[:role_node]
+  def shutdown
+    execute_command @cmds["system"]["shutdown"]
   end
 
-  def execute_command(command, host)
-    re = Regexp.compile("#{@name}|#{@role}", Regexp::IGNORECASE)
-    if re =~ host
-      result = `#{command}`
-      log "execute #{command} => result: #{$?}"
-      if $?.to_s.include?("exit 0")
-        if command.downcase.include?("status")
-          case result.encode("UTF-8")
-          when /running/ then response("running")
-          when /stopped/   then response("stopped")
-          end
-        else
-          response("success")
+  def reboot
+    execute_command @cmds["system"]["reboot"]
+  end
+
+  def execute_command(command)
+    result = `#{command}`
+    log "execute #{command} => result: #{$?}"
+    if $?.to_s.include?("exit 0")
+      if command.downcase.include?("status")
+        case result.encode("UTF-8")
+        when /実行中|running/ then response("running")
+        when /停止|stopped/   then response("stopped")
         end
       else
-        response("fail")
+        response("success")
       end
+    else
+      response("fail")
     end
   end
 end
