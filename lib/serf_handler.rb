@@ -1,32 +1,30 @@
 # -*- coding: utf-8 -*-
 # @author katsuyuki
 #
-require "logger"
+require 'logger'
 
+# Base class for processing serf events
 class SerfHandler
-  attr :name, :role, :event
+  attr_reader :name, :role, :event
 
-  def initialize(log=nil)
-    if log
-      if log.kind_of?(String)
-        @logger = Logger.new(log)
-      else
-        @logger = log
-      end
-    else
-      @logger = Logger.new(STDOUT)
-      @logger.level = Logger::INFO
-    end
+  def initialize(log_file = nil)
+    @logger = create_logger(log_file)
+    @logger.level = Logger::INFO
     @name = ENV['SERF_SELF_NAME']
     @role = ENV['SERF_TAG_ROLE'] || ENV['SERF_SELF_ROLE']
     @event = case ENV['SERF_EVENT']
-             when 'user'
-               ENV['SERF_USER_EVENT']
-             when 'query'
-               ENV['SERF_QUERY_NAME']
-             else
-               ENV['SERF_EVENT'].gsub(/-/, '_')
+             when 'user'  then ENV['SERF_USER_EVENT']
+             when 'query' then ENV['SERF_QUERY_NAME']
+             else              ENV['SERF_EVENT'].gsub(/-/, '_')
              end
+  end
+
+  def create_logger(log_file)
+    if log_file
+      log_file.is_a?(String) ? Logger.new(log_file) : log_file
+    else
+      Logger.new(STDOUT)
+    end
   end
 
   def log(msg)
@@ -35,7 +33,7 @@ class SerfHandler
 
   def response(msg)
     if msg.bytesize > 1024
-      message = "message exceeds limit of 1024 bytes."
+      message = 'message exceeds limit of 1024 bytes.'
       log message
       puts message
     else
@@ -44,8 +42,9 @@ class SerfHandler
   end
 end
 
+# Proxy for handling serf event
 class SerfHandlerProxy < SerfHandler
-  def initialize(log_file=nil)
+  def initialize(log_file = nil)
     super(log_file)
     @handlers = {}
   end
@@ -54,25 +53,25 @@ class SerfHandlerProxy < SerfHandler
     @handlers[role] = handler
   end
 
-  def get_klass()
-    klass = false
+  def good_handler
+    handler = nil
     if @handlers.include?(@role)
-      klass = @handlers[@role]
+      handler = @handlers[@role]
     elsif @handlers.include?('default')
-      klass = @handlers['default']
+      handler = @handlers['default']
     end
-    klass
+    handler
   end
 
-  def run()
-    unless klass = get_klass
-      log "no handler for role"
-    else
+  def run
+    if (the_handler = good_handler)
       begin
-        klass.send @event
-      rescue NoMethodError => e
+        the_handler.send @event
+      rescue NoMethodError
         log "#{@event} event not implemented by class"
       end
+    else
+      log 'no handler for role'
     end
   end
 end

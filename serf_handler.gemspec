@@ -5,7 +5,7 @@ require 'serf_handler'
 
 Gem::Specification.new do |gem|
   gem.name        = 'serf_handler'
-  gem.version     = '0.2.0'
+  gem.version     = '0.2.1'
   gem.authors     = ['KONNO Katsuyuki']
   gem.email       = 'konno.katsuyuki@nifty.com'
   gem.description = 'Serf event handler for ruby'
@@ -23,5 +23,5 @@ Gem::Specification.new do |gem|
     'README.md'
   ]
 
-  gem.add_runtime_dependency('logger', ['>= 1.2.8'])
+  gem.add_runtime_dependency('logger')
 end
