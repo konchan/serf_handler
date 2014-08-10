@@ -5,7 +5,7 @@ require 'serf_handler'
 
 Gem::Specification.new do |gem|
   gem.name        = 'serf_handler'
-  gem.version     = '0.2.1'
+  gem.version     = '0.2.2'
   gem.authors     = ['KONNO Katsuyuki']
   gem.email       = 'konno.katsuyuki@nifty.com'
   gem.description = 'Serf event handler for ruby'

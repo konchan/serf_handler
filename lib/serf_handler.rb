@@ -9,6 +9,7 @@ class SerfHandler
 
   def initialize(log_file = nil)
     @logger = create_logger(log_file)
+    set_logging if @logger.is_a? Logger
     @logger.level = Logger::INFO
     @name = ENV['SERF_SELF_NAME']
     @role = ENV['SERF_TAG_ROLE'] || ENV['SERF_SELF_ROLE']
@@ -19,6 +20,13 @@ class SerfHandler
              end
   end
 
+  def set_logging
+    @logger.formatter = proc do |sv, datetime, _pn, msg|
+      "[#{datetime.strftime('%Y-%m-%d %H:%M:%S.%L')}][#{sv}] #{msg}\n"
+    end
+    @logger.level = Logger::INFO
+  end
+
   def create_logger(log_file)
     if log_file
       log_file.is_a?(String) ? Logger.new(log_file) : log_file
@@ -27,14 +35,23 @@ class SerfHandler
     end
   end
 
-  def log(msg)
+  def info(msg)
     @logger.info(msg)
+  end
+  alias_method :log, :info
+
+  def warn(msg)
+    @logger.warn(msg)
+  end
+
+  def error(msg)
+    @logger.error(msg)
   end
 
   def response(msg)
     if msg.bytesize > 1024
       message = 'message exceeds limit of 1024 bytes.'
-      log message
+      warn message
       puts message
     else
       puts msg
@@ -68,10 +85,10 @@ class SerfHandlerProxy < SerfHandler
       begin
         the_handler.send @event
       rescue NoMethodError
-        log "#{@event} event not implemented by class"
+        warn "#{@event} event not implemented by class"
       end
     else
-      log 'no handler for role'
+      info 'no handler for role'
     end
   end
 end

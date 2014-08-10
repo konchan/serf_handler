@@ -5,7 +5,7 @@
 #  Control services
 #   serf query -tag role=web status iis
 #  Control system shutdown or reboot
-#   serf event system_ctl 'shutdown lb'
+#   serf query -node your_host shutdown
 
 require 'yaml'
 require 'serf_handler'
@@ -38,7 +38,7 @@ class CustomQueryHandler < SerfHandler
 
   def execute_command(command)
     result = `#{command}`
-    log "execute #{command} => result: #{$CHILD_STATUS}"
+    info "execute #{command} => result: #{$CHILD_STATUS}"
     result_response $CHILD_STATUS unless command.downcase.include?('status')
     status_response result if command.downcase.include?('status')
   end
@@ -48,6 +48,7 @@ class CustomQueryHandler < SerfHandler
       response('success')
     else
       response('fail')
+      error 'Failed to execute the command.'
     end
   end
 

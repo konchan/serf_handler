@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'logger'
 
 describe 'SerfHandler' do
-  context 'Check initialize process' do
+  context 'Check initialize process & error method' do
     before do
       ENV['SERF_SELF_NAME'] = 'local'
       ENV['SERF_SELF_ROLE'] = 'web'
@@ -22,6 +22,22 @@ describe 'SerfHandler' do
     it 'is set the event: member-join' do
       handler = SerfHandler.new
       expect(handler.event).to eq('member_join')
+    end
+
+    it 'write error' do
+      logger = double('Logger')
+      expect(logger).to receive(:level=).with(Logger::INFO)
+      expect(logger).to receive(:error).with('Error occurred').and_return(true)
+      handler = SerfHandler.new(logger)
+      expect(handler.error('Error occurred')).to be true
+    end
+
+    it 'alias_method' do
+      logger = double('Logger')
+      expect(logger).to receive(:level=).with(Logger::INFO)
+      expect(logger).to receive(:info).with('alias method test').and_return(true)
+      handler = SerfHandler.new(logger)
+      expect(handler.log('alias method test')).to be true
     end
   end
 
@@ -73,7 +89,7 @@ describe 'SerfHandlerProxy' do
     it 'has no method implemented' do
       logger = double('Logger')
       expect(logger).to receive(:level=).with(Logger::INFO)
-      expect(logger).to receive(:info).with('member_join event not implemented by class').and_return(true)
+      expect(logger).to receive(:warn).with('member_join event not implemented by class').and_return(true)
       handler = SerfHandlerProxy.new(logger)
       handler.register('default', SerfHandler.new)
       expect(handler.run).to be true
