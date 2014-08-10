@@ -26,13 +26,17 @@ class MyEventHandler < SerfHandler
   
   # called by SerfHandlerProxy when member-join event occurs
   def member_join
-    log "start processing member-join event"
+    info "start processing member-join event"
+    # other methods to write log: warn, error
+    
     # write your code
   end
   
   # called by SerfHandlerProxy when your custome event occurs
   def your_custome_event
-    log "start processing custom event"
+    info "start processing custom event"
+    # other methods to write log: warn, error
+
     # write your code
   end
   
